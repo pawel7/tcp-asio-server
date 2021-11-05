@@ -1,0 +1,8 @@
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+build/*
+src/asio-1.20.0/*
