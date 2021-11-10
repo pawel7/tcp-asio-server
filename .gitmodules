@@ -7,3 +7,6 @@
 [submodule "vendor/httpparser"]
 	path = vendor/httpparser
 	url = https://github.com/nekipelov/httpparser.git
+[submodule "vendor/talking-async"]
+	path = vendor/talking-async
+	url = https://github.com/chriskohlhoff/talking-async.git

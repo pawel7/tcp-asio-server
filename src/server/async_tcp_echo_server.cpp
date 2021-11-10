@@ -40,6 +40,7 @@ private:
         {
           if (!ec)
           {
+            std::cout << length << " bytes read " << std::endl;
             do_write(length);
           }
         });
@@ -49,10 +50,11 @@ private:
   {
     auto self(shared_from_this());
     asio::async_write(socket_, asio::buffer(data_, length),
-        [this, self](std::error_code ec, std::size_t /*length*/)
+        [this, self](std::error_code ec, std::size_t length)
         {
           if (!ec)
           {
+            std::cout << length << " bytes written " << std::endl;
             do_read();
           }
         });
