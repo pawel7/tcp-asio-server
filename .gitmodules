@@ -1,0 +1,9 @@
+[submodule "vendor/llhttp"]
+	path = vendor/llhttp
+	url = https://github.com/nodejs/llhttp.git
+[submodule "vendor/cpp-netlib"]
+	path = vendor/cpp-netlib
+	url = https://github.com/cpp-netlib/cpp-netlib.git
+[submodule "vendor/httpparser"]
+	path = vendor/httpparser
+	url = https://github.com/nekipelov/httpparser.git

@@ -1,17 +1,17 @@
 cmake_minimum_required(VERSION 3.10)
-
-# set the project name
 project(tcp_server)
 
-file(GLOB SERVER_FILES server/*.cpp)
-set(SOURCES app/main.cpp asio-1.20.0/include/asio.hpp ${SERVER_FILES})
+find_package (Threads)
 
-# add_subdirectory( asio-1.20.0 )
+set(SOURCES app/main.cpp 
+            server/Server.cpp)
 
-add_executable(tcp_server ${SOURCES})
+include_directories(server asio asio/include)
+#include_directories(server asio asio/include ../vendor/cpp-netlib)
 
-set(LIB_SOURCES asio/include/*.*)
-#add_library(asio STATIC ${LIB_SOURCES})
+#add_subdirectory(/home/pawel/pro/tcp_server/vendor/cpp-netlib)
 
-#target_include_directories(tcp_server src/server)
-
+add_definitions(-DASIO_STANDALONE)
+add_executable(${PROJECT_NAME} ${SOURCES})
+target_link_libraries(${PROJECT_NAME} PUBLIC pthread)
+#target_link_libraries(${PROJECT_NAME} PUBLIC pthread CPP-NETLIB)

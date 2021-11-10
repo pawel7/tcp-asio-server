@@ -1,12 +1,10 @@
 #pragma once
-// #include "IThread.h"
-class Server //:
-	//public IThread
+#include <thread>
+class Server
 {
 	unsigned short port;
 public:
 	Server(unsigned short);
 	virtual ~Server();
-	void ThreadRoutine();
 };
 
