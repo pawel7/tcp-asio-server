@@ -146,9 +146,11 @@ int main(int argc, char* argv[])
   {
     if (argc != 5)
     {
-      std::cerr << "Usage: proxy";
+      std::cerr << "Usage: step_0";
       std::cerr << " <listen_address> <listen_port>";
-      std::cerr << " <target_address> <target_port>\n";
+      std::cerr << " <target_address> <target_port>\n\n";
+      std::cerr << "e.g. step_0 \"\" 54545 www.boost.org 80\n";
+      std::cerr << "Run telnet in another terminal e.g. \ntelnet localhost 54545\nGET / HTTP/1.1\n";
       return 1;
     }
 

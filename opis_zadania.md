@@ -1,3 +1,14 @@
+## Setup
+Budujemy step_0 - za pomocą `bld_step0.sh` ( do folderu bin ), lub
+ step_0 i async_tcp_echo_server przez `make` ( do folderu server )
+
+cd ../../bin
+step_0
+lub step_0 "" 54545 www.boost.org 80
+w drugim terminalu telnet localhost 54545
+GET / HTTP/1.1
+
+
 Opis zadania.
 
 Notatki z rozmowy z Pawłem I z 9.11.2021
@@ -32,4 +43,5 @@ Na razie zapiszę je jako url, np.
 
 IP serwera/getdata?from=<timestamp>&to=<timestamp>
 IP serwera/clear
+
 
