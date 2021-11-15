@@ -1,1 +1,0 @@
-g++ -std=c++2a -Wall -Wextra  -fno-inline -I../asio/include -g -DASIO_ENABLE_HANDLER_TRACKING -pthread step_0.cpp -o ../../bin/step_0

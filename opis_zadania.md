@@ -1,14 +1,14 @@
 ## Setup
-Budujemy step_0 - za pomocą `bld_step0.sh` ( do folderu bin ), lub <br>
- step_0 i async_tcp_echo_server przez `make` ( do folderu server )
+Budujemy krok_0 - za pomocą `bld_krok0.sh` ( do folderu bin ), lub <br>
+ krok_0 i async_tcp_echo_server przez `make` ( do folderu server )
 
 ```
 cd ../../bin
-step_0
+krok_0
 ```
 lub 
 ```
-step_0 "" 54545 www.boost.org 80
+krok_0 "" 54545 www.boost.org 80
 ```
 w drugim terminalu <br>
 ```
