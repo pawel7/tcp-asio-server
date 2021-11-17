@@ -1,5 +1,5 @@
 // https://valelab4.ucsf.edu/svn/3rdpartypublic/boost/doc/html/boost_asio/example/http/client/async_client.cpp
-//
+// 
 // async_client.cpp
 // ~~~~~~~~~~~~~~~~
 //
@@ -22,7 +22,8 @@ class client
 {
 public:
   client(boost::asio::io_service& io_service,
-      const std::string& server, const std::string& path)
+      const std::string& verb,
+      const std::string& server, const std::string& path, const std::string& posted_values = "")
     : resolver_(io_service),
       socket_(io_service)
   {
@@ -30,7 +31,7 @@ public:
     // server will close the socket after transmitting the response. This will
     // allow us to treat all data up until the EOF as the content.
     std::ostream request_stream(&request_);
-    request_stream << "GET " << path << " HTTP/1.0\r\n";
+    request_stream << verb << " " << path << " HTTP/1.0\r\n";
     request_stream << "Host: " << server << "\r\n";
     request_stream << "Accept: */*\r\n";
     request_stream << "Connection: close\r\n\r\n";
@@ -45,6 +46,11 @@ public:
   }
 
 private:
+  tcp::resolver resolver_;
+  tcp::socket socket_;
+  boost::asio::streambuf request_;
+  boost::asio::streambuf response_;
+
   void handle_resolve(const boost::system::error_code& err,
       tcp::resolver::iterator endpoint_iterator)
   {
@@ -129,6 +135,12 @@ private:
         std::cout << "Invalid response\n";
         return;
       }
+      if (status_code == 400)
+      {
+        std::cout << " Response returned with status code 400 - Bad Request \n";
+        return;
+      }
+      else
       if (status_code != 200)
       {
         std::cout << "Response returned with status code ";
@@ -193,10 +205,7 @@ private:
     }
   }
 
-  tcp::resolver resolver_;
-  tcp::socket socket_;
-  boost::asio::streambuf request_;
-  boost::asio::streambuf response_;
+ 
 };
 
 int main(int argc, char* argv[])
