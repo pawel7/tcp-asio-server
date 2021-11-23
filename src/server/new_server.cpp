@@ -18,20 +18,58 @@ void send_(tcp::socket & socket, const string& message) {
        boost::asio::write( socket, boost::asio::buffer(message) );
 }
 
+ std::string get_temp_response[2] =   
+            {"HTTP/1.1 200 OK\r\n"
+            "Server: localhost\r\n"
+            "Content-Type: text/html\r\n"
+            "Content-Length: 54\r\n"
+            "Connection: close\r\n"
+            "\r\n"
+            "<html><body><h2>Temperatura 1 = 7</h2></body><html />",
+
+            "HTTP/1.1 200 OK\r\n"
+            "Server: localhost\r\n"
+            "Content-Type: text/html\r\n"
+            "Content-Length: 54\r\n"
+            "Connection: close\r\n"
+            "\r\n"
+            "<html><body><h2>Temperatura 2 = 8</h2></body><html />"};
+
 int main() {
       boost::asio::io_service io_service;
-//listen for new connection
+            //listen for new connection
       tcp::acceptor acceptor_(io_service, tcp::endpoint(tcp::v4(), 5005 ));
-//socket creation 
+            //socket creation 
       tcp::socket socket_(io_service);
-//waiting for connection
+ bool loop =true;
+ while (loop)
+      {
+            //waiting for connection
       acceptor_.accept(socket_);
-//read operation
-      string message = read_(socket_);
-      cout << message << endl;
-//write operation
-      send_(socket_, "Hello From Server!");
-      cout << "Server sent Hello message to Client!" << endl;
-   return 0;
+    
+            //read request from client    
+      string request_str = read_(socket_);
+      cout << "Server got the following request " << request_str << endl;
+
+            // check request, prepare response
+      if(  request_str.find("STOP_SERVER") != std::string::npos )
+      {
+            cout << "Closing server" << endl;
+            loop = false;
+            socket_.close();
+            break;
+      }
+      std::size_t found = request_str.find("temp1");
+      int ind;
+      ind = ( found != std::string::npos ) ? 0 : 1;
+      std::string response_str = get_temp_response[ind];
+
+            //write response
+      send_(socket_, response_str);
+      cout << "Server sent response: " << response_str << endl;
+      //acceptor_.close();
+      socket_.close();
+      }
+  return 0;
 }
 

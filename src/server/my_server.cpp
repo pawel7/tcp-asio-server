@@ -12,8 +12,8 @@
 #include <boost/bind.hpp>
 #include <boost/smart_ptr.hpp>
 #include <boost/asio.hpp>
-#include <boost/thread.hpp>
-
+//#include <boost/thread.hpp>
+#include <thread>
 using boost::asio::ip::tcp;
 
 #include "../../vendor/httpparser/src/httpparser/request.h"
@@ -21,8 +21,6 @@ using boost::asio::ip::tcp;
 //#include "../../vendor/httpparser/src/httpparser/httpresponseparser.h"
 //#include "../../vendor/httpparser/src/httpparser/response.h"
 //#include "../../vendor/httpparser/src/httpparser/urlparser.h"
-
-using boost::asio::ip::tcp;
 
 using httpparser::HttpRequestParser;
 using httpparser::Request;
@@ -34,60 +32,23 @@ enum { max_length = 1024 };
 
 typedef boost::shared_ptr<tcp::socket> socket_ptr;
 
-class server
-{
-private:
+//class server
+//{
+//private:
     char request_[max_length];
     int request_length_;
     char response_[max_length];
     int response_length_;
     short port_;
     
-  tcp::acceptor acceptor_;
-  tcp::socket socket_;
+  //tcp::acceptor acceptor_;
+  //tcp::socket socket_;
   enum { temp_len = 5 };
     // tablice temperatur
   int temp1[temp_len] = { 2, 3, 5, 7, 11 };
   int temp2[temp_len] = { 4, 6, 10, 14, 22 };
   int ind1, ind2;
   
-public:
-server(asio::io_context& io_context, short port)
-    : acceptor_(io_context, tcp::endpoint(tcp::v4(), port)),
-      socket_(io_context),
-      ind1(0), ind2(0)
-  {
-    do_accept();
-  }
-
-  /// Construct the server to listen on the specified TCP address and port,
-   server(const std::string& address, const std::string& port,
-      const std::string& doc_root, std::size_t io_service_pool_size);
-
-  /// Run the server's io_service loop.
-  void run();
-
-  /// Stop the server.
-  void stop();
-
-private:
-  /// Handle completion of an asynchronous accept operation.
-  //void handle_accept(const boost::system::error_code& e);
-
-  /// The pool of io_service objects used to perform asynchronous operations.
-  //io_service_pool io_service_pool_;
-
-  /// Acceptor used to listen for incoming connections.
-  boost::asio::ip::tcp::acceptor acceptor_;
-
-  /// The next connection to be accepted.
- // connection_ptr new_connection_;
-
-  /// The handler for all incoming requests.
-  //request_handler request_handler_;
-
- 
-public:
   int get_temp1()
   {
       int ret = temp1[ind1];
@@ -114,15 +75,32 @@ public:
       temp2[ind2] = temp;
   }
 
-int prepare_response()
+// Parsuje żądanie i umieszcza odpowiedź w response_. Zwraca długość odpowiedzi
+// 
+int prepare_response( )//std::string str_req ) char * request_, int request_length_ )
 {
   int nr, temp, len, html_len;
   Request request;
   HttpRequestParser parser;
   bool OK = false;
-  char reply_html_buf[500];
+  bool Parsing_OK = false;
+  char response_html[500];
 
+  
   HttpRequestParser::ParseResult res = parser.parse(request, request_, request_ + request_length_);
+  if( res == HttpRequestParser::ParsingCompleted )
+  {
+      std::cout << "Request parsing completed " << request.inspect() << std::endl;
+      Parsing_OK = true;
+  }
+  else
+  {
+      std::cerr << "Request parsing failed" << std::endl;
+      std::cerr << "request_length_ from client = " << request_length_ << std::endl;
+  }
+
+  if( Parsing_OK )
+  {
   if( request.method == "GET" )
   {
          if ( request.uri == "temp1")
@@ -137,18 +115,31 @@ int prepare_response()
              nr = 2;
              OK = true;
          } 
-         html_len = sprintf( reply_html_buf,         
+
+         if( OK )
+         {
+          html_len = sprintf( response_html,         
             "<html><body><h2>Temperatura %d = %d</h2></body><html />", 
             nr, temp );
 
-         len = sprintf( response_,         
+           len = sprintf( response_,         
             "HTTP/1.1 200 OK\r\n"
             "Server: localhost\r\n"
             "Content-Type: text/html\r\n"
             "Content-Length: %d\r\n"
-            "Connection: keep-alive\r\n"
+            "Connection: close\r\n"
             "\r\n%s",
-            html_len, reply_html_buf); 
+            html_len, response_html); 
+
+           /*len = sprintf( response_,         
+            "HTTP/1.1 200 OK\r\n"
+            "Server: localhost\r\n"
+            "Content-Type: text/html\r\n"
+            "Content-Length: 54\r\n"
+            "Connection: close\r\n"
+            "\r\n"
+            "<html><body><h2>Temperatura 1 = 7</h2></body><html />"*/
+         }
   }
   else  if( request.method == "POST" )
   {
@@ -168,7 +159,7 @@ int prepare_response()
                 set_temp2( temp );
             }
         
-         html_len = sprintf( reply_html_buf,         
+         html_len = sprintf( response_html,         
             "<html><body><h2>Ustawiono temperature %d na %d</h2></body><html />", 
             nr, temp );
 
@@ -177,12 +168,13 @@ int prepare_response()
             "Server: localhost\r\n"
             "Content-Type: text/html\r\n"
             "Content-Length: %d\r\n"
-            "Connection: keep-alive\r\n"
+            "Connection: close\r\n"
             "\r\n%s",
-            html_len, reply_html_buf); 
+            html_len, response_html); 
        }
   }
-  else
+  }
+  if( !OK || !Parsing_OK )
   { 
        len = sprintf( response_,         
             "HTTP/1.1 400 Bad Request\r\n"
@@ -191,9 +183,8 @@ int prepare_response()
 
   }
   response_length_ = len;
+  return len;
 } // prepare_response
-
-private:
 
 void session(socket_ptr sock)
 {
@@ -201,16 +192,27 @@ void session(socket_ptr sock)
   {
     for (;;)
     {
-      char data[max_length];
-
+      //char data[max_length];
+  char request_[max_length];
+    //int request_length_;
+    char response_[max_length];
+    int response_length_;
+    //short port_;
+  
       boost::system::error_code error;
-      size_t length = sock->read_some(boost::asio::buffer(data), error);
+      //size_t length = 
+      sock->read_some(boost::asio::buffer(request_), error);
       if (error == boost::asio::error::eof)
+      {
+        std::cout << "error == boost::asio::error::eof\n";
         break; // Connection closed cleanly by peer.
+      }
+        
       else if (error)
         throw boost::system::system_error(error); // Some other error.
 
-      boost::asio::write(*sock, boost::asio::buffer(data, length));
+      response_length_ = prepare_response();
+      boost::asio::write(*sock, boost::asio::buffer(response_, response_length_));
     }
   }
   catch (std::exception& e)
@@ -219,32 +221,115 @@ void session(socket_ptr sock)
   }
 }
 
-class server
-{
 
-server(boost::asio::io_service& io_service, short port)
+void server_fun(boost::asio::io_service& io_service, short port)
 {
   tcp::acceptor a(io_service, tcp::endpoint(tcp::v4(), port));
   for (;;)
   {
     socket_ptr sock(new tcp::socket(io_service));
     a.accept(*sock);
-    boost::thread t(boost::bind(session, sock));
+    std::thread t(boost::bind(session, sock));
   }
 }
 
-int main(int argc, char* argv[])
+int OLDmain(void)
 {
-  short port = 5005;
+  short port = 5555;
   try
   { 
     boost::asio::io_service io_service;
-    server(io_service, port );
+    server_fun(io_service, port );
+    std::cout << "po server_fun\n";
   }
   catch (std::exception& e)
   {
     std::cerr << "Exception: " << e.what() << "\n";
   }
+  std::cout << "main po try catch\n";
 
   return 0;
 }
+
+using namespace boost::asio;
+using ip::tcp;
+using std::string;
+using std::cout;
+using std::endl;
+
+string read_(tcp::socket & socket) {
+       boost::asio::streambuf buf;
+       boost::asio::read_until( socket, buf, "\n" );
+       string data = boost::asio::buffer_cast<const char*>(buf.data());
+       return data;
+}
+void send_(tcp::socket & socket, const string& message) {
+       const string msg = message + "\n";
+       boost::asio::write( socket, boost::asio::buffer(message) );
+}
+
+int main() {
+      boost::asio::io_service io_service;
+//listen for new connection
+      tcp::acceptor acceptor_(io_service, tcp::endpoint(tcp::v4(), 5005 ));
+//socket creation 
+      tcp::socket socket_(io_service);
+//waiting for connection
+      acceptor_.accept(socket_);
+ while (true)
+      {
+
+//read operation
+      string message = read_(socket_);
+      cout << message << endl;
+//write operation
+      send_(socket_, "Hello From Server!");
+
+      cout << "Server sent Hello message to Client!" << endl;
+      }
+  return 0;
+}
+
+
+
+/*
+namespace asio = boost::asio;
+
+std::string readline( asio::ip::tcp::socket & socket ) {
+  asio::streambuf buf;
+  asio::read_until( socket, buf, "\n" );
+
+  std::string data = asio::buffer_cast<const char*>(buf.data());
+  data.erase( --data.end() );  // remove the last delimeter
+  std::cout << "wczytano " << data << "\n";
+  return data;
+}
+
+void sendline( asio::ip::tcp::socket & socket, const std::string& str ) {
+  const std::string msg = str + "\n";
+  asio::write( socket, asio::buffer(msg) );
+}
+
+int main1() {
+  asio::io_service io_service;
+
+  asio::ip::tcp::acceptor acc(
+      io_service,
+      asio::ip::tcp::endpoint( asio::ip::tcp::v4(), 5005 ) );
+  asio::ip::tcp::socket socket(io_service);
+
+  acc.accept( socket );
+
+
+  while(true) {
+    
+    std::string str = readline( socket );
+    std::cout << "Wczytano " << str << std::endl;
+request_length_
+    prepare_response( str.data());
+    sendline(socket, "pong");
+    std::cout << "sent pong" << std::endl;
+  }
+
+  return 0;
+}*/

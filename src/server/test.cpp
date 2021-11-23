@@ -1,4 +1,10 @@
 
+
+https://www.c-sharpcorner.com/article/socket-programming-in-cpp-using-boost-asio-tcp-server-and-client/
+
+https://www.binarytides.com/server-client-example-c-sockets-linux/
+
+
 const std::string ok =
   "HTTP/1.0 200 OK\r\n";
 const std::string bad_request =

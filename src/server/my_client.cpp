@@ -1,32 +1,11 @@
-// #include <iostream>
-// #include <istream>
-// #include <ostream>
-// #include <string>
-// #include <boost/asio.hpp>
-
-#include <iomanip>
-
-// wg   https://valelab4.ucsf.edu/svn/3rdpartypublic/boost/doc/html/boost_asio/example/echo/blocking_tcp_echo_client.cpp
-// NIE wg  https://valelab4.ucsf.edu/svn/3rdpartypublic/boost/doc/html/boost_asio/example/http/client/async_client.cpp
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <boost/asio.hpp>
 
 #include <stdio.h>
-#include "../../vendor/httpparser/src/httpparser/request.h"
-#include "../../vendor/httpparser/src/httpparser/httprequestparser.h"
-#include "../../vendor/httpparser/src/httpparser/httpresponseparser.h"
-#include "../../vendor/httpparser/src/httpparser/response.h"
-#include "../../vendor/httpparser/src/httpparser/urlparser.h"
 
 using boost::asio::ip::tcp;
-
-using httpparser::HttpRequestParser;
-using httpparser::Request;
-
-using httpparser::HttpResponseParser;
-using httpparser::Response;
 
 enum { max_length = 1024 };
 
@@ -37,60 +16,51 @@ private:
     // std::ostream request_stream;
     std::string server_;
     short port_;
-    //char buf_[max_length];
     char request_[max_length];
     int request_length_;
   
 public:
-
-int check_request()
-{
-  
-  Request request;
-  HttpRequestParser parser;
-
-  HttpRequestParser::ParseResult res = parser.parse(request, request_, request_ + request_length_);
-
-  if( res == HttpRequestParser::ParsingCompleted )
-  {
-      std::cout << request.inspect() << std::endl;
-      return EXIT_SUCCESS;
-  }
-  else
-  {
-      std::cerr << "Parsing failed" << std::endl;
-      std::cerr << "request_length_ from client = " << request_length_ << std::endl;
-      return EXIT_FAILURE;
-  }
-} // check_request
 
     client( std::string server, short port ):
         server_(server), 
         port_(port)
 {
     boost::asio::io_service io_service;
-    char sport[20];
-    sprintf(sport, "%d", port_ );
-    tcp::resolver resolver(io_service);
-    tcp::resolver::query query(tcp::v4(), server_, sport );
-    tcp::resolver::iterator iterator = resolver.resolve(query);
 
-    tcp::socket s(io_service);
-    s.connect(*iterator);
-    
+        //socket creation
+    tcp::socket socket(io_service);
+        //connection
+    socket.connect( tcp::endpoint( boost::asio::ip::address::from_string(server), port ));
+      
     do_menu(); // wyświetl menu, przygotuj żądanie i ustaw request_length_
 
     while (request_length_ > 0)  // wybrano z menu coś poza "Koniec"
     {
-        boost::asio::write(s, boost::asio::buffer(request_, (size_t)request_length_));
+        boost::system::error_code error;
+        // Send request from client
+        boost::asio::write(socket, boost::asio::buffer(request_, (size_t)request_length_), error);
+        if( !error ) 
+        {
+            std::cout << "Client sent a request!" << std::endl;
+        }
+        else 
+        {
+            std::cout << "Client sending request failed: " << error.message() << std::endl;
+        }
 
-        char reply[max_length];
-        size_t reply_length = boost::asio::read(s,
-            boost::asio::buffer(reply, max_length));
-        
-        std::cout << "Reply is: ";
-        std::cout.write(reply, reply_length);
-        std::cout << "\n";
+        // getting response from server
+        boost::asio::streambuf response_buffer;
+        boost::asio::read(socket, response_buffer, boost::asio::transfer_all(), error);
+        if( error && error != boost::asio::error::eof ) 
+        {
+            std::cout << "response from server failed: " << error.message() << std::endl;
+        }
+        else 
+        {
+            const char* data = boost::asio::buffer_cast<const char*>(response_buffer.data());
+            std::cout << "Client got the following response " << data << std::endl;
+        }
+
         do_menu(); // wybierz coś z menu, przygotuj żądanie i ustaw request_length_
     } 
 } 
@@ -120,7 +90,7 @@ int do_menu()
                 "GET temp%d HTTP/1.1\r\n"
                 "Host: 127.0.0.1 \r\n"
                 "Accept: */*\r\n"
-                "Connection: keep-alive\r\n\r\n", selection );
+                "Connection: close\r\n\r\n", selection );
             break;
         
         case 3:
@@ -138,7 +108,7 @@ int do_menu()
                 "Accept: */*\r\n"
                 "Content-Type: application/x-www-form-urlencoded\r\n"
                 "Content-Length: %d\r\n"
-                "Connection: keep-alive\r\n\r\n" 
+                "Connection: close\r\n\r\n" 
                 "%s", nr_temperatury, post_html_len, post_html_buf );         
             break;
 
@@ -159,7 +129,8 @@ int do_menu()
         }
        
    } while ( len == 0 );    // wymuś wybranie czegoś z menu poza default
-   request_length_ = len;
+   request_length_ = std::max( len, 0 );
+   std::cout << "wybrano request_ = " << request_ ;
    return len;
 }
 
@@ -167,6 +138,17 @@ int do_menu()
 
 int main(void)
 {
-    client c("127.0.0.1", 5005);
+    std::string server("127.0.0.1");
+    short port = 5005;
+    
+    //boost::asio::io_service io_service;
+
+        //socket creation
+    //tcp::socket socket(io_service);
+        
+        //connection
+    //socket.connect( tcp::endpoint( boost::asio::ip::address::from_string(server), port ));
+  
+    client c(server, port);
     return 0;
 }
