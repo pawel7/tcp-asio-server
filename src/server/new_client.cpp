@@ -76,7 +76,7 @@ int main() {
                cout << "Client send failed: " << error.message() << endl;
           }
      
-          if ( request_msg != "STOP_SERVER" )
+          //if ( request_msg != "STOP_SERVER" )
           {
            // getting response from server
           boost::asio::streambuf receive_buffer;

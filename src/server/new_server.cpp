@@ -42,6 +42,7 @@ int main() {
             //socket creation 
       tcp::socket socket_(io_service);
  bool loop =true;
+ std::string response_str;
  while (loop)
       {
             //waiting for connection
@@ -56,13 +57,16 @@ int main() {
       {
             cout << "Closing server" << endl;
             loop = false;
-            socket_.close();
+            response_str = "CLOSING SERVER";
             break;
       }
-      std::size_t found = request_str.find("temp1");
-      int ind;
-      ind = ( found != std::string::npos ) ? 0 : 1;
-      std::string response_str = get_temp_response[ind];
+      else
+      {
+            std::size_t found = request_str.find("temp1");
+            int ind;
+            ind = ( found != std::string::npos ) ? 0 : 1;
+            response_str = get_temp_response[ind];
+      }
 
             //write response
       send_(socket_, response_str);
