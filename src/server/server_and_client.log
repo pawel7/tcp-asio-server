@@ -1,0 +1,122 @@
+pawel@CADM239:~/pro/tcp_server/src/server$ ./server & ./client
+[3] 14121
+
+
+*=*=*=* 1 *=*=*=*
+
+ 1. Get temp 1
+ 2. Get temp 2
+ 3. Post temp 1
+ 4. Post temp 2
+ 5. Hello
+ 6. Exit
+Wybierz: 1
+Client request_: GET temp1 HTTP/1.1
+Host: 127.0.0.1
+Accept: */*
+Connection: close
+
+
+
+Client sent a request:
+GET temp1 HTTP/1.1
+Host: 127.0.0.1
+Accept: */*
+Connection: close
+
+
+Server got the following request:
+GET temp1 HTTP/1.1
+Host: 127.0.0.1
+Accept: */*
+Connection: close
+
+
+Request parsing completed GET temp1 HTTP/1.1
+Host: 127.0.0.1
+Accept: */*
+Connection: close
+
++ keep-alive: 0
+
+Server sent response:
+HTTP/1.1 200 OK
+Server: localhost
+Content-Type: text/html
+Content-Length: 52
+Connection: close
+
+<html><body><h2>Temperatura 1 = 2</h2></body></html>
+Client got the following response:
+HTTP/1.1 200 OK
+Server: localhost
+Content-Type: text/html
+Content-Length: 52
+Connection: close
+
+<html><body><h2>Temperatura 1 = 2</h2></body></html>
+
+
+*=*=*=* 2 *=*=*=*
+
+ 1. Get temp 1
+ 2. Get temp 2
+ 3. Post temp 1
+ 4. Post temp 2
+ 5. Hello
+ 6. Exit
+Wybierz: 3
+Podaj temperature 1 10
+Client request_: POST temp1 HTTP/1.1
+Host: 127.0.0.1
+Accept: */*
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 2
+Connection: close
+
+10
+
+Client sent a request:
+POST temp1 HTTP/1.1
+Host: 127.0.0.1
+Accept: */*
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 2
+Connection: close
+
+10
+Server got the following request:
+POST temp1 HTTP/1.1
+Host: 127.0.0.1
+Accept: */*
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 2
+Connection: close
+
+10
+Request parsing completed POST temp1 HTTP/1.1
+Host: 127.0.0.1
+Accept: */*
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 2
+Connection: close
+10
++ keep-alive: 0
+
+Server sent response:
+HTTP/1.1 200 OK
+Server: localhost
+Content-Type: text/html
+Content-Length: 64
+Connection: close
+
+<html><body><h2>Ustawiono temperature 1 na 10</h2></body></html>
+Client got the following response:
+HTTP/1.1 200 OK
+Server: localhost
+Content-Type: text/html
+Content-Length: 64
+Connection: close
+
+<html><body><h2>Ustawiono temperature 1 na 10</h2></body></html>
+

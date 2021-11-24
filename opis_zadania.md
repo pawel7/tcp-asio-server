@@ -1,4 +1,4 @@
-## Od nowa opis zadania
+## Aktualny opis zadania
 
 Twoim zadaniem jest napisanie serwera TCP, który otwiera połączenia z klientem pod adresem localhost:5005.
 Serwer ma za zadanie odbierać wiadomości od klienta.
@@ -17,45 +17,15 @@ Pierwsza wersja:
 * serwer wysyła po jednej kolejne liczby, które ma zapisane w tablicy
 
 
-   if (selection == 1)
-   {
-       setpassword ();
-   }
-   else if (selection == 2)
-   {
-       setlaunch ();
-   }
-   else if (selection == 3)
-   {
-       login();
-   }
-   else if (selection == 4)
-    {
-       launch();
-    }
-   else if (selection == 5)
-    {
-      exit ();
-    }
-## Setup
-Budujemy krok_0 - za pomocą `bld_krok0.sh` ( do folderu bin ), lub <br>
- krok_0 i async_tcp_echo_server przez `make` ( do folderu server )
+  ## Setup
+Budujemy serwera i klienta - za pomocą `Bld_proj.sh`
 
 ```
-cd ../../bin
-krok_0
-```
-lub 
-```
-krok_0 "" 54545 www.boost.org 80
-```
-w drugim terminalu <br>
-```
-telnet localhost 54545 <br>
-GET / HTTP/1.1 <br>
+./Bld_proj.sh
+./server & ./client
+
 ```
 
-## Opis zadania.
 
 ### Notatki z rozmowy z Pawłem I z 9.11.2021
 

@@ -1,0 +1,132 @@
+
+
+*=*=*=* 1 *=*=*=*
+
+ 1. Get temp 1
+ 2. Get temp 2
+ 3. Post temp 1
+ 4. Post temp 2
+ 5. Hello
+ 6. Exit
+Wybierz: [1m[35m[0m[34mClient request_: GET temp1 HTTP/1.1
+Host: 127.0.0.1 
+Accept: */*
+Connection: close
+
+[0m
+[1m[34m
+Client sent a request:
+GET temp1 HTTP/1.1
+Host: 127.0.0.1 
+Accept: */*
+Connection: close
+
+[0m
+[1m[32mClient got the following response:
+HTTP/1.1 200 OK
+Server: localhost
+Content-Type: text/html
+Content-Length: 52
+Connection: close
+
+<html><body><h2>Temperatura 1 = 2</h2></body></html>[0m
+
+
+*=*=*=* 2 *=*=*=*
+
+ 1. Get temp 1
+ 2. Get temp 2
+ 3. Post temp 1
+ 4. Post temp 2
+ 5. Hello
+ 6. Exit
+Wybierz: [1m[35m[0m[34mClient request_: GET temp2 HTTP/1.1
+Host: 127.0.0.1 
+Accept: */*
+Connection: close
+
+[0m
+[1m[34m
+Client sent a request:
+GET temp2 HTTP/1.1
+Host: 127.0.0.1 
+Accept: */*
+Connection: close
+
+[0m
+[1m[32mClient got the following response:
+HTTP/1.1 200 OK
+Server: localhost
+Content-Type: text/html
+Content-Length: 52
+Connection: close
+
+<html><body><h2>Temperatura 2 = 4</h2></body></html>[0m
+
+
+*=*=*=* 3 *=*=*=*
+
+ 1. Get temp 1
+ 2. Get temp 2
+ 3. Post temp 1
+ 4. Post temp 2
+ 5. Hello
+ 6. Exit
+Wybierz: [1m[35m[0mPodaj temperature 1 [34mClient request_: POST temp1 HTTP/1.1
+Host: 127.0.0.1 
+Accept: */*
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 2
+Connection: close
+
+10[0m
+[1m[34m
+Client sent a request:
+POST temp1 HTTP/1.1
+Host: 127.0.0.1 
+Accept: */*
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 2
+Connection: close
+
+10[0m
+[1m[32mClient got the following response:
+HTTP/1.1 200 OK
+Server: localhost
+Content-Type: text/html
+Content-Length: 64
+Connection: close
+
+<html><body><h2>Ustawiono temperature 1 na 10</h2></body></html>[0m
+
+
+*=*=*=* 4 *=*=*=*
+
+ 1. Get temp 1
+ 2. Get temp 2
+ 3. Post temp 1
+ 4. Post temp 2
+ 5. Hello
+ 6. Exit
+Wybierz: [1m[35m[0m[34mClient request_: Hello
+[0m
+[1m[34m
+Client sent a request:
+Hello
+[0m
+[1m[32mClient got the following response:
+HTTP/1.1 400 Bad Request
+Server: localhost
+
+[0m
+
+
+*=*=*=* 5 *=*=*=*
+
+ 1. Get temp 1
+ 2. Get temp 2
+ 3. Post temp 1
+ 4. Post temp 2
+ 5. Hello
+ 6. Exit
+Wybierz: [1m[35m[0mEnd of client
