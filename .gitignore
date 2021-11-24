@@ -5,6 +5,5 @@ Testing
 cmake_install.cmake
 bin/*
 build/*
-src/asio/*
-src/cpp-netlib/*
+
 src/server/.vscode/*

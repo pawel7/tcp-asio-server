@@ -2,10 +2,10 @@
 #include <iostream>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
-#include "ansi_colors.h"
+#include <ansi_colors.h>
 
-#include "../../vendor/httpparser/src/httpparser/request.h"
-#include "../../vendor/httpparser/src/httpparser/httprequestparser.h"
+#include <src/httpparser/request.h>
+#include <src/httpparser/httprequestparser.h>
 
 using boost::asio::ip::tcp;
 
@@ -20,6 +20,7 @@ class server
   server(short port):
  port_(port), ind1(0), ind2(0)
  {}
+ virtual ~server(){}
 
 void run()
 {
@@ -104,7 +105,7 @@ int prepare_response( std::string str_req ) //char * request_, int request_lengt
   bool Parsing_OK = false;
   char response_html[500];
 
-  char * request_ = str_req.data();
+  auto request_ = str_req.data();
   int request_length_ = str_req.length();
   len = 0;
   HttpRequestParser::ParseResult res = parser.parse(request, request_, request_ + request_length_);

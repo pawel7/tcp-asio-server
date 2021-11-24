@@ -1,12 +1,6 @@
-[submodule "vendor/llhttp"]
-	path = vendor/llhttp
-	url = https://github.com/nodejs/llhttp.git
-[submodule "vendor/cpp-netlib"]
-	path = vendor/cpp-netlib
-	url = https://github.com/cpp-netlib/cpp-netlib.git
-[submodule "vendor/httpparser"]
-	path = vendor/httpparser
+[submodule "src/httpparser"]
+	path = src/httpparser
 	url = https://github.com/nekipelov/httpparser.git
-[submodule "vendor/talking-async"]
-	path = vendor/talking-async
-	url = https://github.com/chriskohlhoff/talking-async.git
+[submodule "src/asio"]
+	path = src/asio
+	url = https://github.com/chriskohlhoff/asio.git
