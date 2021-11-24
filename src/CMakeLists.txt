@@ -3,3 +3,4 @@ project(tcp_server)
 find_package(Threads)
 
 add_subdirectory(server)
+add_subdirectory(client)
