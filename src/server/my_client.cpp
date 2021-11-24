@@ -74,6 +74,8 @@ client( std::string server, short port ):
     } 
     std::cout << "End of client" << std::endl;
 } 
+ 
+virtual ~client(){}
 
 // Wyświetla menu, pobiera odpowiedź, generuje żądanie,
 // i zwraca długość łancucha z żądaniem
@@ -85,10 +87,10 @@ int do_menu()
     do
     {
         std::cout << "\n\n*=*=*=* " << ++menu_cnt << " *=*=*=*\n\n";
-        std::cout << " 1. get temp 1\n";
-        std::cout << " 2. get temp 2\n";
-        std::cout << " 3. post temp 1\n";
-        std::cout << " 4. post temp 2\n";
+        std::cout << " 1. Get temp 1\n";
+        std::cout << " 2. Get temp 2\n";
+        std::cout << " 3. Post temp 1\n";
+        std::cout << " 4. Post temp 2\n";
         std::cout << " 5. Hello\n";
         std::cout << " 6. Exit\n";
         std::cout << "Wybierz: " << BOLDMAGENTA;

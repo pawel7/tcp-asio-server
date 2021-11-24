@@ -1,44 +1,59 @@
-//
-// wg https://valelab4.ucsf.edu/svn/3rdpartypublic/boost/doc/html/boost_asio/example/echo/blocking_tcp_echo_server.cpp
-//
-// Copyright (c) 2003-2011 Christopher M. Kohlhoff (chris at kohlhoff dot com)
-//
-// Distributed under the Boost Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//
-
 #include <cstdlib>
 #include <iostream>
 #include <boost/bind.hpp>
-//#include <boost/smart_ptr.hpp>
 #include <boost/asio.hpp>
-//#include <boost/thread.hpp>
-//#include <thread>
 #include "ansi_colors.h"
-
-using boost::asio::ip::tcp;
 
 #include "../../vendor/httpparser/src/httpparser/request.h"
 #include "../../vendor/httpparser/src/httpparser/httprequestparser.h"
-//#include "../../vendor/httpparser/src/httpparser/httpresponseparser.h"
-//#include "../../vendor/httpparser/src/httpparser/response.h"
-//#include "../../vendor/httpparser/src/httpparser/urlparser.h"
+
+using boost::asio::ip::tcp;
 
 using httpparser::HttpRequestParser;
 using httpparser::Request;
 
-//using httpparser::HttpResponseParser;
-//using httpparser::Response;
-
 enum { max_length = 1024 };
 
-//typedef boost::shared_ptr<tcp::socket> socket_ptr;
+class server
+{
+  public:
+  server(short port):
+ port_(port), ind1(0), ind2(0)
+ {}
 
-//class server
-//{
-//private:
-    char request_[max_length];
-    int request_length_;
+void run()
+{
+ boost::asio::io_service io_service;
+      //listen for new connection
+ tcp::acceptor acceptor_(io_service, tcp::endpoint(tcp::v4(), port_ ));
+      //socket creation 
+ tcp::socket socket_(io_service);
+
+ std::string response_str;
+ while (true)
+ {
+          //waiting for connection
+      acceptor_.accept(socket_);
+    
+          //read request from client    
+      std::string request_str = read_(socket_);
+      std::cout << YELLOW << "Server got the following request:\n" << request_str << RESET << std::endl;
+
+          // check request, prepare response
+      response_length_ = prepare_response( request_str );
+      response_str = response_;
+
+          //write response
+      send_(socket_, response_str);
+      std::cout << GREEN << "Server sent response:\n" << response_str << RESET << std::endl;
+
+      socket_.close();
+ }
+}
+
+private:
+  //  char request_[max_length];
+  //  int request_length_;
     char response_[max_length];
     int response_length_;
     short port_;
@@ -195,34 +210,11 @@ void send_(tcp::socket & socket, const std::string& message) {
        boost::asio::write( socket, boost::asio::buffer(message) );
 }
 
+};  // class server
+
 int main()
 {
- boost::asio::io_service io_service;
-      //listen for new connection
- tcp::acceptor acceptor_(io_service, tcp::endpoint(tcp::v4(), 5005 ));
-      //socket creation 
- tcp::socket socket_(io_service);
-
- std::string response_str;
- while (true)
- {
-          //waiting for connection
-      acceptor_.accept(socket_);
-    
-          //read request from client    
-      std::string request_str = read_(socket_);
-      std::cout << YELLOW << "Server got the following request:\n" << request_str << RESET << std::endl;
-
-          // check request, prepare response
-      response_length_ = prepare_response( request_str );
-      response_str = response_;
-
-          //write response
-      send_(socket_, response_str);
-      std::cout << GREEN << "Server sent response:\n" << response_str << RESET << std::endl;
-
-      socket_.close();
- }
- return 0;
+    server s(5005);
+    s.run();
+    return 0;
 }
- 
